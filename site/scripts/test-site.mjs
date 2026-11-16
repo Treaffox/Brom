@@ -70,11 +70,24 @@ async function run(type, name) {
       const r = await ctx.request.get(h);
       ok(r.status() === 200 && Number(r.headers()["content-length"] || (await r.body()).length) > 1000, `${tag}: Download ${h} ${r.status()}`);
     }
+    // Feste URLs für Apps (/latest/): erreichbar, CORS offen, no-cache, Versionsnummer passt zur Seite
+    const lver = await (await ctx.request.get(BASE + "/latest/version.json")).json();
+    const rver = await (await ctx.request.get(BASE + "/version.json")).json();
+    ok(lver.version === rver.version, `${tag}: latest/version.json ${lver.version} != version.json ${rver.version}`);
+    for (const u of [lver.css, lver.files.upright, lver.files.italic, lver.files.package, "https://brom.trfx.de/latest/version.json"]) {
+      const r = await ctx.request.get(BASE + new URL(u).pathname);
+      const h = r.headers();
+      ok(r.status() === 200 && h["access-control-allow-origin"] === "*" && /no-cache/.test(h["cache-control"] || ""),
+        `${tag}: feste URL ${u} ${r.status()} cors=${h["access-control-allow-origin"]} cache=${h["cache-control"]}`);
+    }
+    const lcss = await (await ctx.request.get(BASE + "/latest/brom.css")).text();
+    ok(lcss.includes("Brom-VF.woff2") && lcss.includes("Brom-Italic-VF.woff2"), `${tag}: /latest/brom.css ohne Schriftdateien`);
+    ok((await page.locator("#festerlink").textContent()).includes("https://brom.trfx.de/latest/brom.css"), `${tag}: Abschnitt Einbinden nennt den festen Link nicht`);
     ok(msgs.length === 0, `${tag}: Konsole: ${msgs.join(" | ")}`);
     if (SHOTS) {
       await page.evaluate(() => window.scrollTo(0, 0));
       await page.screenshot({ path: `${SHOTS}/${name}-${w}.png`, fullPage: w !== 1280 ? false : false });
-      for (const id of ["tester", "gewichte", "prinzip", "zeichen", "download"]) {
+      for (const id of ["tester", "gewichte", "prinzip", "zeichen", "festerlink", "download"]) {
         await page.locator("#" + id).scrollIntoViewIfNeeded();
         await page.evaluate((i) => document.getElementById(i).scrollIntoView(), id);
         await page.waitForTimeout(150);

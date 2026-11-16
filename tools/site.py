@@ -103,6 +103,21 @@ TEXT_LABELS = [("de", "Deutsch"), ("en", "Englisch"), ("el", "Griechisch"), ("ru
                ("vi", "Vietnamesisch"), ("tech", "Technik")]
 
 
+# Stylesheet unter der festen URL /latest/brom.css (Schriftdateien liegen daneben, ohne Version).
+LATEST_CSS = """/* Brom, immer die neueste Version. https://brom.trfx.de */
+@font-face {
+  font-family: "Brom";
+  src: url("Brom-VF.woff2") format("woff2");
+  font-weight: 100 900; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Brom";
+  src: url("Brom-Italic-VF.woff2") format("woff2");
+  font-weight: 100 900; font-style: italic; font-display: swap;
+}
+"""
+
+
 def esc(s):
     return html.escape(s, quote=True)
 
@@ -230,7 +245,7 @@ def page(title, body, desc, extra_head=""):
     </a>
     <nav class="nav" aria-label="Hauptnavigation">
       <a href="/#tester">Tester</a><a href="/#gewichte">Gewichte</a><a href="/#prinzip">Prinzip</a>
-      <a href="/#zeichen">Zeichen</a><a href="/#features">Features</a><a href="/#download">Download</a>
+      <a href="/#zeichen">Zeichen</a><a href="/#features">Features</a><a href="/#festerlink">Einbinden</a><a href="/#download">Download</a>
       <a href="/#aenderungen">Änderungen</a>
     </nav>
     <span class="ver" title="Aktuelle Version">v{V}</span>
@@ -285,6 +300,13 @@ def build():
     shutil.copy(C.ROOT / "LICENSE", OUT / "downloads/LICENSE.txt")
     for p in sorted((C.DIST / "variable").glob("*.ttf")) + sorted(web.glob("*[[]wght[]].woff2")):
         shutil.copy(p, OUT / "downloads" / p.name)
+    # Feste URLs ohne Version im Pfad: hier liegt immer die neueste Fassung (Apps binden diese ein).
+    (OUT / "latest").mkdir()
+    shutil.copy(web / f"{C.FILE_STEM}[wght].woff2", OUT / "latest/Brom-VF.woff2")
+    shutil.copy(web / f"{C.FILE_STEM}-Italic[wght].woff2", OUT / "latest/Brom-Italic-VF.woff2")
+    shutil.copy(OUT / "downloads" / zip_name, OUT / "latest/Brom-latest.zip")
+    shutil.copy(C.ROOT / "LICENSE", OUT / "latest/LICENSE.txt")
+    (OUT / "latest/brom.css").write_text(LATEST_CSS)
     for name in ("brom.css", "brom.js"):
         (OUT / "assets" / name).write_text((SITE / "src" / name).read_text().replace("{{V}}", V))
 
@@ -389,21 +411,29 @@ def build():
 <div class="tablewrap"><table class="ftable"><thead><tr><th scope="col">Tag</th><th scope="col">Wirkung</th><th scope="col">Aus</th><th scope="col">An</th></tr></thead>
 <tbody>{feat_rows}</tbody></table></div>""")
 
-    css_snip = f"""@font-face {{
+    link_snip = """<link rel="preconnect" href="https://brom.trfx.de" crossorigin>
+<link rel="stylesheet" href="https://brom.trfx.de/latest/brom.css">
+
+/* im eigenen CSS */
+body { font-family: "Brom", system-ui, sans-serif; }"""
+    css_snip = """/* Zuerst der feste Link, dann die eigene Kopie (Fallback). */
+@font-face {
   font-family: "Brom";
-  src: url("Brom[wght].woff2") format("woff2");
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}}
-@font-face {{
+  src: url("https://brom.trfx.de/latest/Brom-VF.woff2") format("woff2"),
+       url("/fonts/Brom-VF.woff2") format("woff2");
+  font-weight: 100 900; font-style: normal; font-display: swap;
+}
+@font-face {
   font-family: "Brom";
-  src: url("Brom-Italic[wght].woff2") format("woff2");
-  font-weight: 100 900;
-  font-style: italic;
-  font-display: swap;
-}}
-body {{ font-family: "Brom", system-ui, sans-serif; }}"""
+  src: url("https://brom.trfx.de/latest/Brom-Italic-VF.woff2") format("woff2"),
+       url("/fonts/Brom-Italic-VF.woff2") format("woff2");
+  font-weight: 100 900; font-style: italic; font-display: swap;
+}
+body { font-family: "Brom", system-ui, sans-serif; }"""
+    sync_snip = """mkdir -p public/fonts
+curl -fsSL https://brom.trfx.de/latest/Brom-VF.woff2        -o public/fonts/Brom-VF.woff2
+curl -fsSL https://brom.trfx.de/latest/Brom-Italic-VF.woff2 -o public/fonts/Brom-Italic-VF.woff2
+curl -fsSL https://brom.trfx.de/latest/version.json         -o public/fonts/brom-version.json"""
     files = [
         (f"{C.FILE_STEM}[wght].woff2", "Variable Font, aufrecht, Web"),
         (f"{C.FILE_STEM}-Italic[wght].woff2", "Variable Font, kursiv, Web"),
@@ -413,7 +443,25 @@ body {{ font-family: "Brom", system-ui, sans-serif; }}"""
     file_rows = "".join(
         f'<li><a href="{dl(n)}" download><span class="dl__n">{esc(n)}</span><span class="dl__d">{esc(d)}</span>'
         f'<span class="dl__s">{human(sizes[n])}</span></a></li>' for n, d in files)
-    download = section("06", "download", "Download",
+    embed = section("06", "festerlink", "Per festem Link einbinden",
+                    "Empfohlen für alle Apps: Die Schrift wird immer über denselben Link geladen. Ändert sich Brom, muss keine App angepasst werden.", f"""
+<div class="tablewrap"><table class="ftable"><thead><tr><th scope="col">Adresse</th><th scope="col">Inhalt</th></tr></thead>
+<tbody><tr><th scope="row"><code>https://brom.trfx.de/latest/brom.css</code></th><td>fertiges CSS mit <code>@font-face</code> für Brom (aufrecht und kursiv, Gewicht 100–900)</td></tr><tr><th scope="row"><code>https://brom.trfx.de/latest/Brom-VF.woff2</code></th><td>Variable Font, aufrecht</td></tr><tr><th scope="row"><code>https://brom.trfx.de/latest/Brom-Italic-VF.woff2</code></th><td>Variable Font, kursiv</td></tr><tr><th scope="row"><code>https://brom.trfx.de/latest/Brom-latest.zip</code></th><td>komplettes Paket (alle Formate, Lizenz, Änderungsprotokoll)</td></tr><tr><th scope="row"><code>https://brom.trfx.de/latest/version.json</code></th><td>aktuelle Versionsnummer und Dateiliste</td></tr></tbody></table></div>
+<div class="license"><h3>In die Seite einbauen</h3>
+<p>Die Adressen antworten mit <code>Cache-Control: no-cache</code> und erlauben fremde Seiten (CORS). Der Browser fragt bei jedem Aufruf kurz nach (ETag) und lädt nur bei einer neuen Version neu. Wenn die App eine Content-Security-Policy setzt, müssen <code>style-src</code> und <code>font-src</code> <code>https://brom.trfx.de</code> erlauben.</p></div>
+<div class="code"><div class="code__bar"><span>HTML</span><button type="button" class="code__copy" data-copy="#link-snippet">Kopieren</button></div>
+<pre id="link-snippet"><code>{esc(link_snip)}</code></pre></div>
+<div class="license"><h3>Fallback: neueste Version herunterladen und selbst hosten</h3>
+<p>Jede App liefert zusätzlich eine eigene Kopie der <strong>neuesten</strong> Version aus. Sie springt ein, wenn der feste Link nicht erreichbar ist (Ausfall, Firmennetz, Offline). Die Kopie wird beim Bauen oder Ausrollen der App frisch geholt, nicht von Hand gepflegt:</p></div>
+<div class="code"><div class="code__bar"><span>Eigene Kopie holen</span><button type="button" class="code__copy" data-copy="#sync-snippet">Kopieren</button></div>
+<pre id="sync-snippet"><code>{esc(sync_snip)}</code></pre></div>
+<div class="license"><p>Im CSS steht der feste Link zuerst, die eigene Kopie danach. Der Browser nimmt die zweite Quelle nur, wenn die erste nicht lädt:</p></div>
+<div class="code"><div class="code__bar"><span>CSS mit Fallback</span><button type="button" class="code__copy" data-copy="#css-snippet">Kopieren</button></div>
+<pre id="css-snippet"><code>{esc(css_snip)}</code></pre></div>
+<div class="license"><p>Ohne eigenen <code>@font-face</code> genügt <code>brom.css</code> allein. Die Kopie lässt sich auch über das Paket <code>Brom-latest.zip</code> holen. Feste Versionen bleiben unter <code>downloads/Brom-&lt;Version&gt;.zip</code> erhalten.</p>
+<p class="license__more">Änderungen, die den Satz bestehender Texte sichtbar verschieben (Breiten, Zeilenhöhe), erhöhen die Hauptversion und stehen vorher im Änderungsprotokoll. Gewohnte Korrekturen kommen ohne Ankündigung über den festen Link.</p></div>""")
+
+    download = section("07", "download", "Download",
                        "Frei nutzbar unter der SIL Open Font License 1.1, auch kommerziell.", f"""
 <div class="dl">
   <a class="dl__main" href="{dl(zip_name)}" download>
@@ -423,15 +471,13 @@ body {{ font-family: "Brom", system-ui, sans-serif; }}"""
   </a>
   <ul class="dl__files">{file_rows}</ul>
 </div>
-<div class="code"><div class="code__bar"><span>CSS</span><button type="button" class="code__copy" data-copy="#css-snippet">Kopieren</button></div>
-<pre id="css-snippet"><code>{esc(css_snip)}</code></pre></div>
 <div class="license"><h3>Lizenz</h3>
 <p>Brom steht unter der <a href="downloads/LICENSE.txt">SIL Open Font License 1.1</a>. Die Schrift darf frei benutzt, eingebettet, weitergegeben und verändert werden, auch kommerziell. Nur der Verkauf der Schriftdateien allein ist nicht erlaubt. Veränderte Fassungen dürfen nicht „Brom“ heißen (Reserved Font Name). Brom enthält Teile von Geist (© The Geist Project Authors) und Inter (© The Inter Project Authors), beide unter der Open Font License.</p></div>""")
 
-    changelog = section("07", "aenderungen", "Änderungen", "",
+    changelog = section("08", "aenderungen", "Änderungen", "",
                         f'<div class="log">{md_to_html((C.ROOT / "CHANGELOG.md").read_text())}</div>')
 
-    body = "\n".join([hero, tester, weights, principle, glyphs, features, download, changelog])
+    body = "\n".join([hero, tester, weights, principle, glyphs, features, embed, download, changelog])
     desc = ("Brom: technische, eckige Sans-Serif. Gewichte 100 bis 900, aufrecht und kursiv, "
             "über 2000 Zeichen. Frei unter der Open Font License.")
     (OUT / "index.html").write_text(page(f"Brom – Schrift {V}", body, desc), encoding="utf-8")
@@ -444,6 +490,11 @@ body {{ font-family: "Brom", system-ui, sans-serif; }}"""
     (OUT / "version.json").write_text(json.dumps(
         {"name": "Brom", "version": V, "characters": n_chars, "glyphs": n_glyphs,
          "license": "OFL-1.1", "download": "/" + dl(zip_name)}, ensure_ascii=False, indent=1) + "\n")
+    (OUT / "latest/version.json").write_text(json.dumps(
+        {"name": "Brom", "version": V, "css": "https://brom.trfx.de/latest/brom.css",
+         "files": {"upright": "https://brom.trfx.de/latest/Brom-VF.woff2",
+                   "italic": "https://brom.trfx.de/latest/Brom-Italic-VF.woff2",
+                   "package": "https://brom.trfx.de/latest/Brom-latest.zip"}}, indent=1) + "\n")
     total = sum(p.stat().st_size for p in OUT.rglob("*") if p.is_file())
     print(f"site/dist: {sum(1 for p in OUT.rglob('*') if p.is_file())} Dateien, {human(total)}; "
           f"{n_chars} Zeichen, ZIP {human(sizes[zip_name])}")

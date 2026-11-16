@@ -225,8 +225,10 @@ select { font: inherit; font-size: 15px; color: var(--fg); background: var(--sur
 .code pre { margin: 0; padding: 16px; overflow-x: auto; font-size: 14px; line-height: 1.5; }
 .code pre code { background: none; border: 0; padding: 0; font-size: inherit; }
 .license { margin-top: 40px; max-width: 760px; }
+.license + .code, .code + .code { margin-top: 24px; }
 .license h3 { font-size: 18px; margin-bottom: 8px; }
 .license p { margin: 0; color: var(--muted); }
+.license .license__more { margin-top: 12px; }
 
 /* Änderungen */
 .log { max-width: 760px; }
