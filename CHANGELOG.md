@@ -5,6 +5,14 @@ Alle nennenswerten Änderungen an der Schrift stehen hier. Versionen folgen
 Satz oder Laufweite bestehender Texte sichtbar verschieben, MINOR für neue
 Zeichen und Funktionen, PATCH für Korrekturen.
 
+## [0.3.3] – 2026-11-16
+
+### Korrigiert
+- **Punkte schmaler als der Stamm:** In den fetten Gewichten (ab etwa 530) war der Punkt auf dem i schmaler als der Stamm darunter (Black: Punkt 158, Stamm 183 Einheiten). Der Punkt ist jetzt in jedem Gewicht mindestens so breit wie der Stamm (Black: 183 × 183, bei Regular und leichter bleibt alles wie vorher, dort war der Punkt schon breiter). Die Unterkante und damit der Abstand zum Stamm bleiben, der Punkt wächst nach oben. Betrifft alle Zeichen mit Punkt: i, j, ï, í, ì, î, ĩ, ị, ĳ, kyrillisch і ї ј, alle Umlaute und Punktakzente (ä ö ü ë ė ż ġ …), Punkt, Doppelpunkt, Semikolon, Ausrufe- und Fragezeichen, Mittelpunkt u. a.
+- **Runde Punkte (ss08)** und die Punkte der griechischen Dieresis-Tonos-Akzente (ΐ …): Dasselbe, sie sind nur dann vergrößert, wenn sie schmaler als der Stamm waren (nur Black und die schweren Gewichte).
+
+- **Ausrufezeichen:** Der Balken von ! und ¡ lief zum Punkt hin auf etwa 65 % seiner Breite zusammen. Jetzt hat er von oben bis unten dieselbe Dicke, wie ein umgedrehtes i (Regular 86 Einheiten, Black 184). Gilt in allen Gewichten, aufrecht und kursiv, auch für ‼ ⁈ ⁉ ¿-Kombinationen mit Ausrufezeichen und die ss08-Variante.
+
 ## [0.3.2] – 2026-11-16
 
 ### Geändert

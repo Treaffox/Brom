@@ -25,7 +25,7 @@ from brom.ufo_ops import load_master, lerp_font, track_font
 from brom.squircle import squircle_glyph
 from brom.inter_import import select, import_into, add_stack_anchors
 from brom.element import build_element, FEATURE as ELEMENT_FEATURE
-from brom.dots import find_dots, square_dots
+from brom.dots import find_dots, square_dots, widen_round_dots, space_dieresis, straighten_bars
 from brom.tips import find_tips, sharpen_tips
 from brom.joins import find_steps, smooth_steps
 from brom.inter_import import stem_at
@@ -258,7 +258,13 @@ def prepare_style(style, log):
         smooth_steps(f, step_sel)
         rep = import_into(f, inter, selection, st["italic_angle"], inter_angle)
         rep["tips_sharpened"] = tips_done
-        rep["dots_squared"] = square_dots(f, dot_sel, st["italic_angle"])
+        i_stem = stem_at(f, "i", 265) or 0  # Stammbreite des i (waagrechter Schnitt, unabhängig von der Neigung)
+        rep["dots_squared"] = square_dots(f, dot_sel, st["italic_angle"], min_side=i_stem)
+        rep["round_dots_widened"] = widen_round_dots(f, i_stem, st["italic_angle"])
+        rep["bars_straightened"] = straighten_bars(f, st["italic_angle"])
+        # Schmales Dieresis (ï ї): zwei stammbreite Punkte brauchen mehr Platz als vorher.
+        rep["dieresis_spaced"] = space_dieresis(f, 35, st["italic_angle"])
+        rep["dieresis_ss08_spaced"] = space_dieresis(f, 20, st["italic_angle"], r"^dieresiscomb\.narrow\.ss08$")
         kc, ki = C.SQUIRCLE[m]
         n = sum(squircle_glyph(g, kc, ki, st["italic_angle"]) for g in f)
         track_font(f, C.TRACKING[m])
