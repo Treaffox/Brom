@@ -85,7 +85,10 @@ h1, h2, h3, h4 { margin: 0; font-weight: 700; letter-spacing: -.015em; line-heig
 .hero { padding: clamp(48px, 9vw, 120px) 0 clamp(40px, 6vw, 80px); border-bottom: 1px solid var(--line); }
 .kicker { margin: 0 0 20px; font-size: 14px; letter-spacing: .02em; color: var(--muted); font-feature-settings: "tnum"; }
 .hero__title { font-size: clamp(56px, 13vw, 184px); font-weight: 800; letter-spacing: -.035em; line-height: .95;
-  margin-left: -.04em; }
+  margin-left: -.04em; padding: .2em 0; }
+/* Die Element-Kachel steht in voller Versalgröße und ragt etwa .2em über die Zeile
+   hinaus (Padding oben); nach ihr kein negatives Spacing, sonst klebt das „o“ am Rahmen. */
+.hero__title .dlig, .brand__name .dlig { letter-spacing: 0; }
 .hero__trfx { font-weight: 200; }
 .hero__lead { max-width: 640px; font-size: clamp(19px, 2.2vw, 24px); line-height: 1.4; margin: 28px 0 0; color: var(--muted); }
 .hero__cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
@@ -155,6 +158,8 @@ select { font: inherit; font-size: 15px; color: var(--fg); background: var(--sur
 .prin__show span:nth-child(2n) { border-right: 0; }
 .prin__show span:nth-child(n+3) { border-bottom: 0; }
 .prin__show .dlig { color: var(--accent); }
+/* Die Kachel ist rund 1,5em breit (Br in voller Größe), deshalb kleiner und in der Zelle mittig. */
+.prin__show span.dlig { font-size: clamp(56px, 9.2vw, 118px); display: flex; align-items: center; justify-content: center; }
 .prin__list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 28px 32px; }
 .prin__list h3 { font-size: 18px; margin-bottom: 6px; }
 .prin__list p { margin: 0; color: var(--muted); font-size: 16px; }

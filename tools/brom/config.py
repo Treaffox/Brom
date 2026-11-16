@@ -80,3 +80,7 @@ DROP_FEATURES = {"ss11"}
 
 # Glyph für die Element-Kachel [Br]. Kein eigener Codepoint, nur über dlig.
 ELEMENT_GLYPH = "Br.element"
+# Innenabstand zwischen „Br" und Rahmen links/rechts, in Versalhöhen. „Br" selbst
+# steht in voller Größe, die Kachel ergibt sich daraus (Black reicht bis -340,
+# so tief wie die tiefsten übrigen Zeichen).
+ELEMENT_PAD = 0.09

@@ -5,6 +5,14 @@ Alle nennenswerten Änderungen an der Schrift stehen hier. Versionen folgen
 Satz oder Laufweite bestehender Texte sichtbar verschieben, MINOR für neue
 Zeichen und Funktionen, PATCH für Korrekturen.
 
+## [0.3.2] – 2026-11-16
+
+### Geändert
+- **Element-Kachel:** „Br“ steht jetzt in voller Größe auf der Grundlinie, genauso groß wie die folgenden Buchstaben („Brom“). Früher war es auf 60 % verkleinert. Die Kachel wächst entsprechend mit (Innenabstand links und rechts fest, die Höhe ergibt sich aus dem Quadrat). Sie ist damit deutlich größer als bisher und ragt über und unter die Zeile hinaus. Gilt für alle Gewichte, aufrecht und kursiv. In Black reicht sie nach unten nicht tiefer als die tiefsten übrigen Zeichen der Schrift.
+
+### Korrigiert
+- **Kerning:** Beim Übernehmen von Inters Kerning entschied bisher der Zufall der Python-Hash-Reihenfolge, welches Paar gewann, wenn mehrere auf dasselbe Brom-Paar fielen. Jetzt gilt das spezifischste Paar (Glyph vor Gruppe), sonst alphabetisch, Builds sind reproduzierbar. Betroffen sind einzelne Paare mit Griechisch und Kyrillisch (z. B. γ vor Komma und Punkt, ҵ vor v w y), höchstens 5 Einheiten Unterschied.
+
 ## [0.3.1] – 2026-11-13
 
 ### Korrigiert
