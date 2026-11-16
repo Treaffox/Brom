@@ -1,0 +1,9 @@
+{
+  "name": "brom-site-tests",
+  "private": true,
+  "type": "module",
+  "description": "Browsertests der Brom-Website (Playwright)",
+  "devDependencies": {
+    "playwright": "1.63.0"
+  }
+}
