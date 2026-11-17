@@ -84,3 +84,7 @@ ELEMENT_GLYPH = "Br.element"
 # steht in voller Größe, die Kachel ergibt sich daraus (Black reicht bis -340,
 # so tief wie die tiefsten übrigen Zeichen).
 ELEMENT_PAD = 0.09
+
+# Zusätzlicher Abstand zwischen Punkt und Strich bei i, j, ï, ! ¡ ? ¿, als Anteil der
+# Punktbreite (wächst also mit dem Gewicht mit). 0.2 ≈ +20 Einheiten in Regular, +37 in Black.
+DOT_GAP_RATIO = 0.20

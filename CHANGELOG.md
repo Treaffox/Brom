@@ -5,6 +5,14 @@ Alle nennenswerten Änderungen an der Schrift stehen hier. Versionen folgen
 Satz oder Laufweite bestehender Texte sichtbar verschieben, MINOR für neue
 Zeichen und Funktionen, PATCH für Korrekturen.
 
+## [0.3.4] – 2026-11-16
+
+### Korrigiert
+- **Ausrufezeichen:** Balken und Punkt von ! und ¡ sind jetzt genau gleich breit und liegen exakt übereinander (vorher war der Punkt breiter als der Balken, Regular 113 gegen 86 Einheiten, und saß um bis zu 3 Einheiten daneben). Der Punkt bleibt, der Balken wird so breit wie er. Gilt in allen Gewichten, aufrecht und kursiv, auch für ‼ und die ss08-Variante mit rundem Punkt. In Thin ist der Balken dadurch dicker als der Stamm der übrigen Buchstaben.
+
+### Geändert
+- **Mehr Platz zwischen Punkt und Strich** bei i, j, ï und allen Zeichen mit Punkt auf i/j (ĳ, ị, į, kyrillisch і ј ї, fi u. a.), bei ! ¡ ? ¿ und ‼: Der Abstand wächst um 20 % der Punktbreite (Thin +10, Regular +19–23, Black +37 Einheiten), damit er in jedem Gewicht mitwächst. Bei i, j und ï steigt der Punkt, bei ! und ? bleiben Grundlinie und Versalhöhe stehen und der Strich beginnt entsprechend höher bzw. endet bei ¡ ¿ tiefer. Breite, Laufweite und Kerning ändern sich nicht. Nicht betroffen: ‽, ; und die Punkte über anderen Buchstaben (ä, ċ …).
+
 ## [0.3.3] – 2026-11-16
 
 ### Korrigiert
