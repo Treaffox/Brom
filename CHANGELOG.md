@@ -1,10 +1,5 @@
 # Änderungsprotokoll – Brom
 
-Alle nennenswerten Änderungen an der Schrift stehen hier. Versionen folgen
-[Semantic Versioning](https://semver.org/lang/de/): MAJOR für Änderungen, die
-Satz oder Laufweite bestehender Texte sichtbar verschieben, MINOR für neue
-Zeichen und Funktionen, PATCH für Korrekturen.
-
 ## [0.3.4] – 2026-11-16
 
 ### Korrigiert
