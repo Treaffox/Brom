@@ -88,3 +88,9 @@ ELEMENT_PAD = 0.09
 # Zusätzlicher Abstand zwischen Punkt und Strich bei i, j, ï, ! ¡ ? ¿, als Anteil der
 # Punktbreite (wächst also mit dem Gewicht mit). 0.2 ≈ +20 Einheiten in Regular, +37 in Black.
 DOT_GAP_RATIO = 0.20
+
+# Obergrenze für die Oberkante des Punkts bei i, j, ï, fi: Oberlänge (Höhe von l) plus
+# DOT_TOP_RATIO × Punktgröße. Quadratische Punkte wachsen mit dem Gewicht nach oben und
+# standen in Bold 70, in Black 106 Einheiten über l (Geist 12–20, Inter 24–56).
+# 0.3 ergibt rund +28 in Regular (greift dort nicht), +44 in Bold, +55 in Black.
+DOT_TOP_RATIO = 0.30

@@ -292,15 +292,23 @@ def widen_bars_to_dot(font, italic_angle=0.0):
     return n
 
 
-def open_dot_gaps(font, ratio, italic_angle=0.0):
+def open_dot_gaps(font, ratio, italic_angle=0.0, top_ratio=None):
     """Mehr Platz zwischen Punkt und Strich bei i, j (und allem mit Punkt auf i/j), ï, ! ¡ ? ¿.
 
     Der Zuschlag ist ratio × Punktbreite, damit er in jedem Gewicht mitwächst (Black hat
     große Punkte und war am knappsten). Bei i/j steigt der Punkt (die Komponente rückt
     nach oben), bei ! und ? rückt die Strichkante zum Punkt hin zurück, die Grundlinie
     und die Oberkante (Versalhöhe) bleiben. Bei ¡ ¿ umgekehrt. Alle Rückungen laufen
-    entlang der Neigung. Gibt die Anzahl der geänderten Glyphen zurück."""
+    entlang der Neigung. Gibt die Anzahl der geänderten Glyphen zurück.
+
+    top_ratio: Der Punkt über i/j reicht höchstens bis Oberlänge (Höhe von l) + top_ratio ×
+    Punktgröße. Ist er höher, rückt er herunter (der Zuschlag kann dann auch null oder
+    negativ werden), sonst stünde er in den schweren Gewichten zu weit über l, k, f."""
     tan = math.tan(math.radians(-italic_angle)) if italic_angle else 0.0
+    asc = None
+    if top_ratio is not None and "l" in font:
+        ls = [p.y for c in font["l"].contours for p in c.points]
+        asc = max(ls) if ls else None
     n = 0
     for g in font:
         changed = False
@@ -313,8 +321,12 @@ def open_dot_gaps(font, ratio, italic_angle=0.0):
                     ys = [p.y for c in base.contours for p in c.points]
                     if not us:
                         continue
-                    d = round(ratio * (max(us) - min(us)))
+                    size = max(ys) - min(ys)  # Punktgröße (Höhe eines Punkts, bei ï nicht die Paarbreite)
+                    d = round(ratio * size)
                     t = list(comp.transformation)
+                    if asc is not None:
+                        top = max(ys) * t[3] + t[5]
+                        d = min(d, round(asc + top_ratio * size - top))
                     t[4] = t[4] + d * tan
                     t[5] = t[5] + d
                     comp.transformation = tuple(t)

@@ -1,5 +1,10 @@
 # Änderungsprotokoll – Brom
 
+## [0.3.5] – 2026-11-19
+
+### Korrigiert
+- **Punkt auf i, j, ï und fi zu hoch:** In den fetten Gewichten stand der Punkt weit über der Oberlänge von l, k und f (Bold 70, Black 106 Einheiten; Geist 12–20, Inter 24–56). Ursache waren die zu Stammbreite vergrößerten quadratischen Punkte, die nach oben wachsen, plus der Zuschlag aus 0.3.4. Die Oberkante des Punkts ist jetzt auf Oberlänge + 30 % der Punktgröße begrenzt (Bold +39, Black +55, Regular und leichter unverändert). ï steht dadurch genauso hoch wie i. Der Abstand zwischen Punkt und Stamm bleibt in Regular wie in 0.3.4 und schrumpft nur dort, wo er sonst zu hoch geworden wäre (Bold 66 statt 98, Black 43 statt 94 Einheiten).
+
 ## [0.3.4] – 2026-11-16
 
 ### Korrigiert

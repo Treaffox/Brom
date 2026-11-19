@@ -263,7 +263,7 @@ def prepare_style(style, log):
         rep["round_dots_widened"] = widen_round_dots(f, i_stem, st["italic_angle"])
         rep["bars_straightened"] = straighten_bars(f, st["italic_angle"])
         rep["bars_widened_to_dot"] = widen_bars_to_dot(f, st["italic_angle"])
-        rep["dot_gaps_opened"] = open_dot_gaps(f, C.DOT_GAP_RATIO, st["italic_angle"])
+        rep["dot_gaps_opened"] = open_dot_gaps(f, C.DOT_GAP_RATIO, st["italic_angle"], top_ratio=C.DOT_TOP_RATIO)
         # Schmales Dieresis (ï ї): zwei stammbreite Punkte brauchen mehr Platz als vorher.
         rep["dieresis_spaced"] = space_dieresis(f, 35, st["italic_angle"])
         rep["dieresis_ss08_spaced"] = space_dieresis(f, 20, st["italic_angle"], r"^dieresiscomb\.narrow\.ss08$")
